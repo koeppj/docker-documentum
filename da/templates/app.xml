@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+
+<config>
+   <scope>
+        <application extends="webtop/app.xml">
+        <preferencesrepository>
+            <!-- Repository folder for storing user preferences in App server environment-->
+            <repository_path>/Resources/Registry/Preferences/Webtop</repository_path>
+            <!-- If repository is blank, the dfc global registry repository will be assumed as the preference docbase-->
+            <repository>$DM_PREFERENCES_REPO</repository>
+            <!-- Encrypted password for default preference user "dmc_wdk_preferences_owner" -->
+            <password>$DM_PREFERENCES_ENCRYPTED_PASSWORD</password>
+        </preferencesrepository>
+
+		<!--CTS DAM - DA integration changes -->
+        <qualifiers>
+
+            <!-- Location qualifier, scope="location", context="location" -->
+            <qualifier>com.documentum.webtop.app.ApplicationLocationQualifier</qualifier>
+
+            <!-- User qualifier, scope="user", context="user" -->
+            <qualifier>com.documentum.web.formext.config.UserQualifier</qualifier>
+
+            <!-- Role qualifier, scope="role", context="role" -->
+            <qualifier>com.documentum.web.formext.config.RoleQualifier</qualifier>
+
+            <!-- Docbase type qualifier, scope="type", context="objectId" | "type" -->
+            <qualifier>com.documentum.web.formext.config.DocbaseTypeQualifier</qualifier>
+
+            <!-- Docbase name qualifier, scope="docbase", context="objectId" ! "docbase" -->
+            <qualifier>com.documentum.web.formext.config.DocbaseNameQualifier</qualifier>
+
+            <!-- Privilege qualifier, scope="privilege", context="privilege" -->
+            <qualifier>com.documentum.web.formext.config.PrivilegeQualifier</qualifier>
+
+            <!-- Client Environment qualifier, scope="clientenv", context=null -->
+            <qualifier>com.documentum.web.formext.config.ClientEnvQualifier</qualifier>
+
+            <!-- Application qualifier scope="application", context=null -->
+            <qualifier>com.documentum.web.formext.config.AppQualifier</qualifier>
+
+            <!-- Version qualifier, scope="version", context="preferredVersion" -->
+            <qualifier>com.documentum.web.formext.config.VersionQualifier</qualifier>
+
+            <!-- Entitlement qualifier, scope="entitlement", context="entitlement" -->
+            <qualifier>com.documentum.web.formext.config.EntitlementQualifier</qualifier>
+
+            <qualifier>com.documentum.web.formext.config.AspectQualifier</qualifier>
+
+            <qualifier>com.documentum.web.formext.config.FormatQualifier</qualifier>
+
+            <!-- CTS qualifier, scope="ctsnabled", context="ctsenabled" -->
+            <qualifier>com.documentum.webcomponent.formext.CTSQualifier</qualifier>
+
+        </qualifiers>
+
+	<!-- Whether this application supports failover or not This flag is not refreshed dynamically, any changes will require
+              restart of the application server.-->
+         <failover>
+            <enabled>false</enabled>
+         </failover>
+         
+         <dfsessionmanager_mode>admin</dfsessionmanager_mode>
+
+         <!-- Presets -->
+         <presets>
+            <!-- Enable/Disable Presets -->
+            <enabled>true</enabled>
+            <!-- Version of preset package definitions -->
+            <version>1.0</version>
+            <!-- Repository folder containing preset package definitions and preset packages -->
+            <repository_path>/Resources/Registry/Presets/DA</repository_path>
+            <!-- Encrypted password for default preset user "dmc_wdk_presets_owner" -->
+            <!-- To create an encrypted password, execute the following command at a command-->
+            <!-- prompt: -->
+            <!--    java com.documentum.web.formext.session.TrustedAuthenticatorTool <password>-->
+            <!-- The utility sends the encrypted password to the standard output-->
+            <password>$DM_PRESETS_ENCRYPTED_PASSWORD</password>
+
+            <!-- Interval to check for preset package changes in repository  -->
+            <!-- Each execution is scheduled relative to the actual execution time of the previous execution -->
+            <refresh_period_seconds>3600</refresh_period_seconds>
+            <!-- Preset scope definition names may optionally be mapped to a different IQualifier scope name -->
+            <scope_name_mappings>
+               <scope_name_mapping>
+                <preset_scope_definition_name>group</preset_scope_definition_name>
+                <qualifier_scope_name>role</qualifier_scope_name>
+               </scope_name_mapping>
+            </scope_name_mappings>
+         </presets>
+         <hotkeys>
+            <nlsbundle>com.documentum.custom.keyboardshortcut.HotKeysNlsProp</nlsbundle>
+         </hotkeys>
+         <!-- Admin Access sets -->
+         <adminaccesssets>
+             <!-- Enable/Disable Presets -->
+             <enabled>true</enabled>
+         </adminaccesssets>
+
+         <!--Taskspace to DA migration--> 
+          <common_caching_framework>
+               <!--Suggested values for cache_currency_check_interval:
+                       -1 for production (will require app server restart on installation of new forms/processes)
+                       10 for development (10 minute cache refresh) -->
+               <cache_currency_check_interval>10</cache_currency_check_interval>
+
+               <!--  Increasing xforms_cache_size may improve forms performance but will require
+                       more memory for the app server -->
+               <forms_template_cache_size>50</forms_template_cache_size>
+
+           </common_caching_framework>
+
+          <authentication>
+              <!-- Default domain and docbase to authenticate against -->
+              <domain></domain>
+              <docbase></docbase>
+
+              <!-- Class that provide the authentication service -->
+              <service_class>com.documentum.web.formext.session.AuthenticationService</service_class>
+
+              <!-- Single Sign-On authentication scheme configuration -->
+              <sso_config>
+                  <ecs_plug_in></ecs_plug_in>
+                  <ticket_cookie></ticket_cookie>
+                  <user_header></user_header>
+              </sso_config>
+
+              <!-- Kerberos SSO authentication scheme configuration -->
+              <kerberos_sso>
+                  <enabled>false</enabled>
+                  <!--if <repo_selection_page_required>  is set to true, then the repo selection page appears
+                    for the scenarios 1)when timeout happens  2)when Login Again after Logout 3)Everytime the
+                    browser is launched even if the cookies are not cleared.  -->
+                  <repo_selection_page_required>false</repo_selection_page_required>
+                  <browsers>
+                      <windows>
+                          <ieversions>6.0,7.0,8.0,9.0,10.0,11.0</ieversions>
+                          <firefoxversions>2.0,3.0,3.5,10.0,17.0,24.0,31.0,38.0,38.2.0</firefoxversions>
+                      </windows>
+                  </browsers>
+                  <!-- Enable login fall back to DocbaseLogin scheme -->
+                  <docbase_login_fallback>false</docbase_login_fallback>
+                  <!-- Mandatory configuration: Provide the kerberos realm / domian name. -->
+                  <domain></domain>
+                  <!-- Specify the server name if DNS alias is used in the URL -->
+                  <server_name></server_name>
+              </kerberos_sso>
+              <!-- Webseal SSO authentication scheme configuration -->
+              <webseal_sso_config>
+                  <user_header></user_header>
+              </webseal_sso_config>
+              <license>
+                  <!-- Do not modify: licensed product name -->
+                  <product_name>WDK</product_name>
+                  <!-- Do not modify: Product version properties bubdle -->
+                  <product_version_properties>com.documentum.web.WDKBuild</product_version_properties>
+              </license>
+          </authentication>
+
+          <browserrequirements>
+              <windows>
+                  <ieversions>6.0,7.0,8.0,9.0,10.0,11.0</ieversions>
+                  <netscapeversions>7.2</netscapeversions>
+                  <firefoxversions>1.5,2.0,3.0,3.5,3.6,6.0,7.0,10.0,17.0,24.0,31.0,38.0,38.2.0</firefoxversions>
+              </windows>
+              <macintosh>
+                  <netscapeversions>7.2</netscapeversions>
+                  <safariversions>125,312,417,419,523,525,531,534,536,537</safariversions> <!-- Safari seems to change it's minor version for every patch release, hence using major version -->
+                  <firefoxversions>1.5,2.0,3.0,3.5,3.6,6.0,7.0,10.0,24.0,31.0,38.0,38.2.0</firefoxversions>
+              </macintosh>
+              <unix>
+                  <mozillaversions>1.7</mozillaversions>
+                  <firefoxversions>1.5,2.0,3.0,3.5,3.6,6.0,7.0,10.0</firefoxversions>
+              </unix>
+              <nlsbundle>com.documentum.web.form.control.BrowserRequirementsNlsProp</nlsbundle>
+              <warningmsg>
+                  <nlsid>MSG_WARNING</nlsid>
+              </warningmsg>
+              <unsupportedplatformmsg>
+                  <nlsid>MSG_UNSUPPORTED_PLATFORM</nlsid>
+              </unsupportedplatformmsg>
+              <unsupportedbrowsermsg>
+                  <nlsid>MSG_UNSUPPORTED_BROWSER</nlsid>
+              </unsupportedbrowsermsg>
+              <javadisabledmsg>
+                  <nlsid>MSG_JAVA_DISABLED</nlsid>
+              </javadisabledmsg>
+              <browserversionmsg>
+                  <nlsid>MSG_BROWSER_VERSION</nlsid>
+              </browserversionmsg>
+              <softwareinstallmsg>
+                  <nlsid>MSG_SOFTWARE_INSTALL</nlsid>
+              </softwareinstallmsg>
+          </browserrequirements>
+
+      </application>
+
+
+   </scope>
+</config>

@@ -1,0 +1,13 @@
+UPDATE dm_user OBJECT 
+SET user_source='inline password',
+SET user_password='$DM_DOCBASE_OWNER_PASSWORD'
+WHERE user_login_name='$DM_DOCBASE_OWNER'
+GO
+UPDATE dm_user OBJECT
+SET user_password='$DM_PREFERENCES_PASSWORD'
+WHERE user_login_name='dmc_wdk_preferences_owner'
+GO
+SET user_password='$DM_PRESETS_PASSWORD'
+WHERE user_login_name='dmc_wdk_presets_owner'
+GO
+EXIT

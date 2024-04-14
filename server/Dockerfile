@@ -1,5 +1,11 @@
 FROM ubuntu:focal
 
+# Filenames of the compressed distros for Content Server, Thumbnail Server
+# and OpenJDK
+ARG DM_CS_DISTRO_FILENAME=documentum_server_22.2_linux64_postgres.tar
+ARG DM_TS_DISTRO_FILENAME=thumbnailserver_linux_22.2.tar
+ARG DM_JDK_DISTRO_FILENAME=openlogic-openjdk-11.0.22+7-linux-x64.tar
+
 ENV DM_DOCBROKER_PORT=1489
 ENV DM_DOCBASE_PORT=50100
 ENV DM_DOCBASE_NAME=sandbox
@@ -24,6 +30,8 @@ ENV DM_GR_REGISTRY_USER=dm_bof_registry
 ENV DM_GR_REGISTRY_REPO=sandbox
 ENV DM_PREFERENCES_PASSWORD=changeit
 ENV DM_PRESETS_PASSWORD=changeit
+ENV DM_TS_PORT=8081
+ENV DM_TS_ADMIN_PORT=8080
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Required Packages
@@ -31,7 +39,7 @@ RUN apt update
 RUN apt -y install tzdata
 RUN apt -y install postgresql-client-12
 RUN apt -y install unixodbc unixodbc-dev odbc-postgresql csh
-RUN apt -y install tcl-expect gettext iproute2
+RUN apt -y install tcl tcl-expect gettext iproute2
 
 RUN adduser dmadmin --disabled-password 
 
@@ -44,11 +52,18 @@ RUN chown dmadmin:dmadmin /var/lib/documentum
 # Data and Share Volumes
 VOLUME [ "/var/lib/documentum" ]
 
-# OpenJDK goes here
-COPY --chown=dmadmin:dmamin openlogic-openjdk-11.0.22+7-linux-x64 /opt/documentum/openlogic-openjdk-11.0.22+7-linux-x64
+# OpenJDK goes here.  Not JDKs .tars generally distributed with the first level
+# being a directory.  We strip that level so that JAVA_HOME is always $DOCUMENTUM/javajdk
+COPY adds/${DM_JDK_DISTRO_FILENAME} /opt/documentum/${DM_JDK_DISTRO_FILENAME}
+RUN mkdir /opt/documentum/javajdk
+RUN tar -xf /opt/documentum/${DM_JDK_DISTRO_FILENAME} -C /opt/documentum/javajdk --strip-components=1
+RUN chown -R dmadmin:dmadmin /opt/documentum/javajdk
 
-## Installers, Templates and Scripts
-COPY --chown=dmadmin:dmadmin installer /home/dmadmin/installer
+# Content Server and Thumbnail Installers, Templates and Scripts
+ADD --chown=dmadmin:dmadmin adds/${DM_CS_DISTRO_FILENAME} /home/dmadmin/installer/
+ADD --chown=dmadmin:dmadmin adds/${DM_TS_DISTRO_FILENAME} /home/dmadmin/thumbnailserver/
+
+# Templates and Container Scripts
 COPY --chown=dmadmin:dmadmin templates /home/dmadmin/templates
 COPY --chown=dmadmin:dmadmin bin /home/dmadmin/bin
 RUN chmod u+x /home/dmadmin/bin/*

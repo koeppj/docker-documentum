@@ -8,7 +8,7 @@ rm -f /home/dmadmin/running
 
 export DOCUMENTUM=/opt/documentum
 export DM_HOME=$DOCUMENTUM/product/22.2
-export JAVA_HOME=$DOCUMENTUM/openlogic-openjdk-11.0.22+7-linux-x64
+export JAVA_HOME=$DOCUMENTUM/javajdk
 #
 # First check if Service is updated.  If not first time in and we need to update a bunch
 # of stuff for root.
@@ -22,6 +22,8 @@ if  [ $? != 0 ]; then
     mkdir /home/dmadmin/responses
     envsubst < /home/dmadmin/templates/install.properties > /home/dmadmin/responses/install.properties
     envsubst < /home/dmadmin/templates/config.properties > /home/dmadmin/responses/config.properties
+    envsubst < /home/dmadmin/templates/ts_config.properties > /home/dmadmin/responses/ts_config.properties
+    envsubst < /home/dmadmin/templates/ts_install.properties > /home/dmadmin/responses/ts_install.properties
     envsubst < /home/dmadmin/templates/odbc.ini > /etc/odbc.ini
     echo ". ~/.env" >> /home/dmadmin/.bashrc
     echo "Templates Processed"

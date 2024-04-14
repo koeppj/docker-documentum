@@ -7,6 +7,7 @@ UPDATE dm_user OBJECT
 SET user_password='$DM_PREFERENCES_PASSWORD'
 WHERE user_login_name='dmc_wdk_preferences_owner'
 GO
+UPDATE dm_user OBJECT
 SET user_password='$DM_PRESETS_PASSWORD'
 WHERE user_login_name='dmc_wdk_presets_owner'
 GO

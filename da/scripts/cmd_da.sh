@@ -4,7 +4,6 @@ function rep_vars() {
         var_name=`echo $var | cut -d'=' -f1`
         var_value=`echo $var | cut -d'=' -f2`
         var_value=$(echo $var_value | sed 's/\//\\\//g')
-        echo $var_name is $var_value
         sed -i s/\$$var_name/$var_value/g $1
     done
 }
@@ -28,7 +27,6 @@ if [ ! -f /var/lib/dasetup ]; then
     export DM_PREFERENCES_ENCRYPTED_PASSWORD=`java -cp "$DA_HOME/WEB-INF/classes:$DA_HOME/WEB-INF/lib/*" com.documentum.web.formext.session.TrustedAuthenticatorTool $DM_PREFERENCES_PASSWORD | cut -d '[' -f2 | cut -d ']' -f1`
     export DM_PRESETS_ENCRYPTED_PASSWORD=`java -cp "$DA_HOME/WEB-INF/classes:$DA_HOME/WEB-INF/lib/*" com.documentum.web.formext.session.TrustedAuthenticatorTool $DM_PRESETS_PASSWORD | cut -d '[' -f2 | cut -d ']' -f1`
     rep_vars $DA_HOME/custom/app.xml
-    env | grep DM_
     touch /var/lib/dasetup
 fi
 

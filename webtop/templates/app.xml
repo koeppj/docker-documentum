@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+
+
+<!-- Enable Preferences and Presets repo credentials -->
+<config>
+   <scope>
+      <application extends="webtop/app.xml">
+         <preferencesrepository>
+            <!-- Repository folder for storing user preferences in App server environment-->
+            <repository_path>/Resources/Registry/Preferences/Webtop</repository_path>
+            <!-- If repository is blank, the dfc global registry repository will be assumed as the preference docbase-->
+            <repository>$DM_PREFERENCES_REPO</repository>
+            <!-- Encrypted password for default preference user "dmc_wdk_preferences_owner" -->
+            <password>$DM_PREFERENCES_ENCRYPTED_PASSWORD</password>
+         </preferencesrepository>
+         <!-- Presets -->
+         <presets>
+            <!-- Enable/Disable Presets -->
+            <enabled>true</enabled>
+            <!-- Version of preset package definitions -->
+            <version>1.0</version>
+            <!-- Repository folder containing preset package definitions and preset packages -->
+            <repository_path>/Resources/Registry/Presets/Webtop</repository_path>
+            <!-- Encrypted password for default preset user "dmc_wdk_presets_owner" -->
+            <!-- To create an encrypted password, execute the following command at a command-->
+            <!-- prompt: -->
+            <!--    java com.documentum.web.formext.session.TrustedAuthenticatorTool <password>-->
+            <!-- The utility sends the encrypted password to the standard output-->
+            <password>$DM_PRESETS_ENCRYPTED_PASSWORD</password>
+
+            <!-- Interval to check for preset package changes in repository  -->
+            <!-- Each execution is scheduled relative to the actual execution time of the previous execution -->
+            <refresh_period_seconds>3600</refresh_period_seconds>
+            <!-- Preset scope definition names may optionally be mapped to a different IQualifier scope name -->
+            <scope_name_mappings>
+               <scope_name_mapping>
+                <preset_scope_definition_name>group</preset_scope_definition_name>
+                <qualifier_scope_name>role</qualifier_scope_name>
+               </scope_name_mapping>
+            </scope_name_mappings>
+         </presets>
+      </application>
+   </scope>
+</config>

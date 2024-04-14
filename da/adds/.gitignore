@@ -1,2 +1,4 @@
-da/*
-!da/README.md
+*
+!README.md
+!log4j2.properties
+!web.xml

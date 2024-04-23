@@ -4,7 +4,7 @@
 #
 # Check software installation Status.  If not installed then install it.
 # 
-if [ ! -f ~/server_installed ]; then
+if [ ! -f /var/lib/documentum/server_installed ]; then
     cd ~/installer
     echo Installing Server...
     ./serverSetup.bin -f ~/responses/install.properties
@@ -13,7 +13,7 @@ if [ ! -f ~/server_installed ]; then
         cat logs/install.log
         exit
     fi
-    touch ~/server_installed
+    touch /var/lib/documentum/server_installed
 fi
 
 #
@@ -30,7 +30,7 @@ done
 #
 # Database is up.  Now run configuration if not done previously
 #
-if [ ! -f ~/server_configured ]; then
+if [ ! -f /var/lib/documentum/server_configured ]; then
     cd $DM_HOME/install
     echo Configuring Server...
     ./dm_launch_server_config_program.sh -f ~/responses/config.properties
@@ -45,7 +45,7 @@ if [ ! -f ~/server_configured ]; then
     for LOG_FILE in `find $DOCUMENTUM -iname "log4j2.properties"`; do
         sed -i 's/ABSOLUTE/ISO8601/g' $LOG_FILE
     done
-    touch ~/server_configured
+    touch /var/lib/documentum/server_configured
 fi
 
 #
@@ -54,16 +54,16 @@ fi
 #
 $DOCUMENTUM/dba/dm_launch_Docbroker
 
-echo "exit" | idql $DM_DOCBASE_NAME -Udmadmin > /dev/null
+~/bin/dm_health_check.sh
 if [ $? != 0 ]; then
     echo "Staring Repo..."
     $DOCUMENTUM/dba/dm_start_$DM_DOCBASE_NAME
 fi
-echo "exit" | idql $DM_DOCBASE_NAME -Udmadmin > /dev/null
+~/bin/dm_health_check.sh
 until [ $? = 0 ]; do
     echo "Waiting 30 seconds for Database to come up..."
     sleep 30s
-    echo "exit" | idql $DM_DOCBASE_NAME -Udmadmin
+    ~/bin/dm_health_check.sh
 done
 
 #
@@ -81,4 +81,4 @@ done
 #
 # And we are up - Set the health tag and exit to caller
 #
-touch ~/running
+touch /var/lib/documentum/running

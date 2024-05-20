@@ -4,17 +4,17 @@
 #
 # Check software installation Status.  If not installed then install it.
 # 
-if [ ! -f /var/lib/documentum/server_installed ]; then
-    cd ~/installer
-    echo Installing Server...
-    ./serverSetup.bin -f ~/responses/install.properties
-    if [ $? != 0 ]; then
-        echo Installation Failed!!!
-        cat logs/install.log
-        exit
-    fi
-    touch /var/lib/documentum/server_installed
-fi
+#if [ ! -f /var/lib/documentum/server_installed ]; then
+#    cd ~/installer
+#    echo Installing Server...
+#    ./serverSetup.bin -f ~/responses/install.properties
+#    if [ $? != 0 ]; then
+#        echo Installation Failed!!!
+#        cat logs/install.log
+#        exit
+#    fi
+#    touch /var/lib/documentum/server_installed
+#fi
 
 #
 # Wait for the DB to be available using dmdbtest

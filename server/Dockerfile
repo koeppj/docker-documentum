@@ -48,7 +48,7 @@ RUN mkdir -p /opt/documentum/dba
 RUN mkdir -p /opt/documentum/config
 RUN mkdir -p /opt/documentum/apptoken
 RUN chown -R dmadmin:dmadmin /opt/documentum
-RUN mkdir /var/lib/documentum
+RUN mkdir -p /var/lib/documentum
 RUN chown dmadmin:dmadmin /var/lib/documentum
 
 # Data and Share Volumes

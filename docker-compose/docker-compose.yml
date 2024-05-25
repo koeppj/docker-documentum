@@ -14,7 +14,7 @@ networks:
 volumes:
   postgres-data:
   documentum-data:
-  documentum-secure:
+  documentum-dba:
   documentum-config:
   documentum-apptoken:
 
@@ -31,7 +31,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql
   documentum:
-    image: 996472359368.dkr.ecr.us-east-1.amazonaws.com/dctm-cs:22.2
+    image: localhost:32000/dctm-cs:22.2
     hostname: documentum
     container_name: documentum
     env_file:
@@ -41,7 +41,7 @@ services:
         ipv4_address: 192.168.1.226
     volumes:
       - documentum-data:/var/lib/documentum
-      - documentum-secure:/opt/documentum/dba/secure
+      - documentum-dba:/opt/documentum/dba
       - documentum-config:/opt/documentum/config
       - documentum-apptoken:/opt/docmentum/documentum_apptoken
 

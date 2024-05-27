@@ -30,7 +30,10 @@ done
 #
 # Database is up.  Now run configuration if not done previously
 #
-if [ ! -f /var/lib/documentum/server_configured ]; then
+if [ ! -f /opt/documentum/dba/server_configured ]; then
+    echo "Unpacking the dba and config folder tarballs created during image build..."
+    tar -xf /opt/documentum/dba.tar -C /opt/documentum --overwrite
+    tar -xf /opt/documentum/config.tar -C /opt/documentum --overwrite
     cd $DM_HOME/install
     echo Configuring Server...
     ./dm_launch_server_config_program.sh -f ~/responses/config.properties
@@ -45,7 +48,7 @@ if [ ! -f /var/lib/documentum/server_configured ]; then
     for LOG_FILE in `find $DOCUMENTUM -iname "log4j2.properties"`; do
         sed -i 's/ABSOLUTE/ISO8601/g' $LOG_FILE
     done
-    touch /var/lib/documentum/server_configured
+    touch /opt/documentum/dba/server_configured
 fi
 
 #
@@ -81,4 +84,4 @@ done
 #
 # And we are up - Set the health tag and exit to caller
 #
-touch /var/lib/documentum/running
+touch /opt/documentum/dba/running

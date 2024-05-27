@@ -1,1 +1,7 @@
 .env
+documentum-config/
+documentum-data/
+documentum-dba/
+documentum-dfcdata/
+documentum-presets/
+postgres-data/

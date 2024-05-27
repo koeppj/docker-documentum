@@ -1,5 +1,4 @@
 name: documentum
-
 networks:
   documentum-network:
     driver: macvlan
@@ -36,13 +35,23 @@ services:
     container_name: documentum
     env_file:
       - .env
+    depends_on:
+      - postgres
+    healthcheck:
+      test: ["CMD", "su", "-", "dmadmin", "-c", "bin/dm_health_check.sh"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+      start_period: 2m
     networks:
       documentum-network:
         ipv4_address: 192.168.1.226
     volumes:
-      - documentum-data:/var/lib/documentum
-      - documentum-dba:/opt/documentum/dba
-      - documentum-config:/opt/documentum/config
-      - documentum-apptoken:/opt/docmentum/documentum_apptoken
+      - ./documentum-data:/var/lib/documentum
+      - ./documentum-dba:/opt/documentum/dba
+      - ./documentum-config:/opt/documentum/config
+      - ./documentum-dfcdata:/opt/documentum/dfcdata
+      - ./documentum-presets:/opt/documentum/presets
+
 
 

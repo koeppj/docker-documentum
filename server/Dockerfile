@@ -44,15 +44,12 @@ RUN apt -y install tcl tcl-expect gettext iproute2
 RUN adduser dmadmin --disabled-password 
 
 # Documentum Directories and Volumes
-RUN mkdir -p /opt/documentum/dba
-RUN mkdir -p /opt/documentum/config
-RUN mkdir -p /opt/documentum/apptoken
+RUN mkdir -p /opt/documentum
+RUN mkdir -p /opt/documentum/dfcdata
 RUN chown -R dmadmin:dmadmin /opt/documentum
 RUN mkdir -p /var/lib/documentum
 RUN chown dmadmin:dmadmin /var/lib/documentum
 
-# Data and Share Volumes
-VOLUME [ "/var/lib/documentum", "/opt/documentum/dba", "/opt/documentum/config", "/opt/documentum/apptoken" ]
 
 # OpenJDK goes here.  Note JDKs .tars generally distributed with the first level
 # being a directory.  We strip that level so that JAVA_HOME is always $DOCUMENTUM/javajdk
@@ -74,13 +71,19 @@ RUN chmod u+x /home/dmadmin/bin/*
 # Set up ports well known ports
 EXPOSE 1489 1490 50100 50101 9080
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=420s --retries=3 \ 
-    CMD  ["su","-","-c","stat /var/lib/documentum/running 1> /dev/null 2> /dev/null && bin/dm_health_check.sh","dmadmin"]
-
 USER dmadmin
 WORKDIR /home/dmadmin/installer
 RUN /home/dmadmin/bin/dm_install.sh
 
+WORKDIR /opt/documentum
+RUN tar -cf dba.tar dba
+RUN sed -i 's#/opt/documentum#/opt/documentum/dfcdata#g' config/dfc.properties
+RUN tar -cf config.tar config
+
 USER root
 WORKDIR /
+
+# Data and Share Volumes
+VOLUME [ "/var/lib/documentum", "/opt/documentum/dba", "/opt/documentum/config", "/opt/documentum/presets", "/opt/documentum/dfcdata" ]
+
 CMD [ "/home/dmadmin/bin/entry_point.sh" ]

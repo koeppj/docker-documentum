@@ -1,5 +1,5 @@
 #!/bin/sh
-export DOCUMENTUM=/opt/documentum
+. ~/.env
 echo "Gracefull shutdown..."
 $DOCUMENTUM/tomcat9.0.58/bin/stopMethodServer.sh
 $DOCUMENTUM/dba/dm_shutdown_$DM_DOCBASE_NAME

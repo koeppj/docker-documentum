@@ -31,7 +31,7 @@ if  [ $? != 0 ]; then
 fi
 
 # The rest should be run as dmadin
-su - -c '~/bin/dm_entry.sh' dmadmin
+su - -c '~/bin/dm_entry.sh' dmadmin || true
 
 #
 # If not running just hang out in unhealthy state so somecan can look at the logs.  
@@ -40,18 +40,18 @@ su - -c '~/bin/dm_entry.sh' dmadmin
 if [ ! -f /opt/documentum/dba/running ]; then
     echo Problem occured installing, configuring or starting...
     echo Server not in healthy state!
-    read
+    sleep infinity
 fi
 
 #
 # Tail the log file until SIGINT is received
 #
-tail -f $DOCUMENTUM/dba/log/$DM_DOCBASE_NAME.log
+su - dmadmin -c "tail -f $DOCUMENTUM/dba/log/$DM_DOCBASE_NAME.log"
 
 #
 # Shutdown gracefully
 #
-su -c '/home/dmadmin/bin/dm_shutdown.sh' dmadmin
+su - dmadmin -c /home/dmadmin/bin/dm_shutdown.sh
 
 echo "Exited conntent server container..."
 

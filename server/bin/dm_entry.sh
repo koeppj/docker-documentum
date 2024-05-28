@@ -43,9 +43,9 @@ if [ ! -f /opt/documentum/dba/server_configured ]; then
         exit
     fi
     echo Updating docbase owner user object
-    envsubst < ~/templates/update_docbase_owner.dql | idql $DM_DOCBASE_NAME -Udmadmin > /dev/null
+    envsubst < ~/templates/update_docbase_owner.dql | idql $DM_DOCBASE_NAME -Udmadmin 
     echo Updating log4j configurations to use ISO8601 date formatting...
-    for LOG_FILE in `find $DOCUMENTUM -iname "log4j2.properties"`; do
+    for LOG_FILE in `find $DOCUMENTUM -name log4j2.properties`; do
         sed -i 's/ABSOLUTE/ISO8601/g' $LOG_FILE
     done
     touch /opt/documentum/dba/server_configured

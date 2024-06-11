@@ -48,14 +48,51 @@ if [ ! -f /opt/documentum/dba/server_configured ]; then
     for LOG_FILE in `find $DOCUMENTUM -name log4j2.properties`; do
         sed -i 's/ABSOLUTE/ISO8601/g' $LOG_FILE
     done
+    # 
+    # Add the IPV4 only flag to server.ini
+    # 
+    echo Updateing server.ini
+    awk -v section="[SERVER_STARTUP]" -v line="ip_mode = V4ONLY" -f ~/bin/addline.awk \
+        $DOCUMENTUM/dba/config/sandbox/server.ini > tmpini & mv tmpini $DOCUMENTUM/dba/config/sandbox/server.ini
+    #
+    # If secified add the "external" docbroker for DFC clients external to the container network
+    #
+    if [[ -n "${DM_DOCBROKER_EXT_CONFIG}" ]]; then
+        ./dm_launch_server_config_program.sh -f ~/responses/ext_broker.properties
+        $DOCUMENTUM/dba/dm_stop_$DM_DOCBROKER_EXT_NAME
+        #
+        # Set up the IP translation for the gateway IP
+        #
+        cat <<EOF >> $DOCUMENTUM/dba/$DM_DOCBROKER_EXT_NAME.ini
+[TRANSLATION]
+host=$DM_DOCBROKER_EXT_IP=$(hostname -I)
+EOF
+        #
+        # Make sure docbase projects with the external docbrocker service
+        #
+        cat <<EOF >> $DOCUMENTUM/dba/config/$DM_DOCBASE_NAME/server.ini
+[DOCBROKER_PROJECTION_TARGET_2]
+host = $DM_DOCBROKER_EXT_HOST
+port = $DM_DOCBROKER_EXT_PORT
+EOF
+    fi
     touch /opt/documentum/dba/server_configured
+    #
+    # Shutdown everything else a freshstart
+    #
+    $DOCUMENTUM/dba/dm_shutdown_$DM_DOCBASE_NAME
+    $DOCUMENTUM/dba/dm_stop_$DM_DOCBROKER_NAME
+
 fi
 
 #
 # If here install complete, db is up and config completed.  Start docbroker and docbase if not already 
 # running and then wait for it to be up before tailing the log.
 #
-$DOCUMENTUM/dba/dm_launch_Docbroker
+$DOCUMENTUM/dba/dm_launch_$DM_DOCBROKER_NAME
+if [[ -n "${DM_DOCBROKER_EXT_CONFIG}" ]]; then
+    $DOCUMENTUM/dba/dm_launch_$DM_DOCBROKER_EXT_NAME
+fi
 
 ~/bin/dm_health_check.sh
 if [ $? != 0 ]; then

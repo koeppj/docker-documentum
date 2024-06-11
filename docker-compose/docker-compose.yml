@@ -1,14 +1,13 @@
 name: documentum
 networks:
   documentum-network:
-    driver: macvlan
+    driver: ipvlan
     ipam:
       config: 
         - subnet: 192.168.1.0/24
-          ip_range: 192.168.1.224/28
           gateway: 192.168.1.1
       options:
-        parent: enp2s0
+        parent: wlp1s0
 
 volumes:
   postgres-data:

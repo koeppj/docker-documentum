@@ -21,6 +21,7 @@ if  [ $? != 0 ]; then
     echo "Updated /etc/services..."
     mkdir /home/dmadmin/responses
     envsubst < /home/dmadmin/templates/config.properties > /home/dmadmin/responses/config.properties
+    envsubst < /home/dmadmin/templates/ext_broker.properties > /home/dmadmin/responses/ext_broker.properties
     envsubst < /home/dmadmin/templates/ts_config.properties > /home/dmadmin/responses/ts_config.properties
     envsubst < /home/dmadmin/templates/ts_install.properties > /home/dmadmin/responses/ts_install.properties
     envsubst < /home/dmadmin/templates/odbc.ini > /etc/odbc.ini

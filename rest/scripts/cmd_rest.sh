@@ -20,7 +20,8 @@ if [ ! -f /var/lib/restsetup ]; then
     #
     # Update the dfc.properties file
     #
-    export DM_GR_REGISTRY_ENCRYPTED_PASSWORD=`java -cp $REST_HOME/WEB-INF/lib/dfc.jar com.documentum.fc.tools.RegistryPasswordUtils $DM_GR_REGISTRY_PASSWORD`
+    e
+    export DM_GR_REGISTRY_ENCRYPTED_PASSWORD=`java -cp "$REST_HOME/WEB-INF/lib/*" com.documentum.fc.tools.RegistryPasswordUtils $DM_GR_REGISTRY_PASSWORD`
     rep_vars $REST_HOME/WEB-INF/classes/dfc.properties
     #
     # Update server.xml with correct hostname and serving port so online API 
@@ -30,7 +31,7 @@ if [ ! -f /var/lib/restsetup ]; then
     #
     # Do the same with the rest.yml in the web app
     #
-    sed -i s/localhost:8080/${HOSTNAME}:${DM_REST_PORT}/g $REST_HOME/public/openapi/rest.yaml
+    sed -i s/localhost:8080/${DM_REST_EXTERNAL_HOST}/g $REST_HOME/public/openapi/rest.yaml
     touch /var/lib/restsetup
 fi
 

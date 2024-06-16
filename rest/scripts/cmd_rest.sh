@@ -4,7 +4,6 @@ function rep_vars() {
         var_name=`echo $var | cut -d'=' -f1`
         var_value=`echo $var | cut -d'=' -f2`
         var_value=$(echo $var_value | sed 's/\//\\\//g')
-        echo $var_name is $var_value
         sed -i s/\$$var_name/$var_value/g $1
     done
 }
@@ -20,7 +19,6 @@ if [ ! -f /var/lib/restsetup ]; then
     #
     # Update the dfc.properties file
     #
-    e
     export DM_GR_REGISTRY_ENCRYPTED_PASSWORD=`java -cp "$REST_HOME/WEB-INF/lib/*" com.documentum.fc.tools.RegistryPasswordUtils $DM_GR_REGISTRY_PASSWORD`
     rep_vars $REST_HOME/WEB-INF/classes/dfc.properties
     #
